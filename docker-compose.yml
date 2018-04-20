@@ -1,0 +1,28 @@
+version: "2"
+services:
+    wordpress:
+        image: wordpress:latest
+        ports:
+            - "8088:80"
+        depends_on:
+            - db
+        environment:
+            WORDPRESS_DB_HOST: "db:3306"
+            WORDPRESS_DB_NAME: "wordpress"
+            WORDPRESS_DB_USER: "wordpress"
+            WORDPRESS_DB_PASSWORD: "wordpress"
+            MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+            MYSQL_DATABASE: "wordpress"
+            MYSQL_USER: "wordpress"
+            MYSQL_PASSWORD: "wordpress"
+        volumes:
+            - ./:/var/www/html/wp-content/plugins/smart-pwa
+    db:
+        image: mysql:latest
+        env_file: .env
+        volumes:
+            - db-data:/var/lib/mysql
+
+volumes:
+    db-data:
+        driver: local

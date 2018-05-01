@@ -39,7 +39,7 @@ class Customizer {
 			'section' => 'smart_pwa_options',
 		] ) );
 
-		
+
 		$wp_customize->add_setting( 'smart_pwa_not_available_page', [
 			'sanitize_callback' => 'esc_html',
 			'type'              => 'option',

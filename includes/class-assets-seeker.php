@@ -4,16 +4,13 @@ namespace Smart_PWA;
 
 class Assets_Seeker {
 
-	private $styles = [];
-	private $scripts = [];
-
+	private $assets = [];
 
 	public function __construct() {
 		add_action( 'wp_head', [ $this, 'ob_start' ], 0 );
 		add_action( 'wp_footer', [ $this, 'ob_start' ], 0 );
 		add_action( 'wp_head', [ $this, 'ob_end_and_parse' ], 9999 );
 		add_action( 'wp_footer', [ $this, 'ob_end_and_parse' ], 9999 );
-		add_action( 'shutdown', [ $this, 'save_paths' ] );
 	}
 
 	public function ob_start() {
@@ -35,11 +32,13 @@ class Assets_Seeker {
 		$xpath = new \DOMXPath( $dom );
 
 		$styles       = $this->query( $xpath, '//link[@rel="stylesheet"]', 'href' );
-		$this->styles = array_merge( $this->styles, $styles );
-
-		$scripts       = $this->query( $xpath, '//script', 'src' );
-		$this->scripts = array_merge( $this->scripts, $scripts );
-
+		$scripts      = $this->query( $xpath, '//script', 'src' );
+		$assets       = array_merge( $styles, $scripts );
+		$this->assets = array_map( function ( $asset ) {
+			if ( false !== strpos( $asset, home_url() ) ) {
+				return $asset = str_replace( trailingslashit( home_url() ), '/', $asset );
+			}
+		}, $assets );
 	}
 
 	/**
@@ -58,8 +57,10 @@ class Assets_Seeker {
 		return $values;
 	}
 
-	public function save_paths() {
-		update_option( 'pwa_style_paths', $this->styles );
-		update_option( 'pwa_script_paths', $this->scripts );
+	/**
+	 * @return array
+	 */
+	public function get_assets() {
+		return $this->assets;
 	}
 }

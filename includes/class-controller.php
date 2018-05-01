@@ -11,9 +11,15 @@ class Controller {
 		add_action( 'query_vars', [ $this, 'query_vars' ] );
 	}
 
-	public function query_vars() {
+	/**
+	 * @param $vars
+	 *
+	 * @return array
+	 */
+	public function query_vars( $vars ) {
 		$vars[] = SW_ENDPOINT;
 		$vars[] = MANIFEST_ENDPOINT;
+		$vars[] = UPDATE_CACHE_QUERY_VAR;
 
 		return $vars;
 	}
@@ -30,24 +36,21 @@ class Controller {
 		global $wp_query;
 
 
-
 		if ( isset( $wp_query->query[ SW_ENDPOINT ] ) ) {
 			header( 'Content-Type: text/javascript' );
 			header( 'Cache-Control: max-age=' . MINUTE_IN_SECONDS * 30 );
 			header( 'Service-Worker-Allowed: /' );
-			include dirname( SMART_PWA_FILE ) . '/js/service-worker.js.php';
+			include dirname( SMART_PWA_FILE ) . '/includes/js/sw.js.php';
 			exit;
 		}
 
 		if ( isset( $wp_query->query[ MANIFEST_ENDPOINT ] ) ) {
 			header( 'Content-Type: application/manifest+json' );
-			include dirname( __FILE__ ) . '/manifest.php';
+			include dirname( SMART_PWA_FILE ) . '/includes/manifest.php';
 			exit;
 		}
-
 		if ( isset( $wp_query->query[ UPDATE_CACHE_QUERY_VAR ] ) ) {
-			new Assets_Seeker();
-			update_option( 'pwd_last_updated', current_time( 'U' ) );
+			update_option( 'smart_pwa_enqueue_update', 1 );
 		}
 	}
 }

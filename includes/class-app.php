@@ -8,27 +8,71 @@ const UPDATE_CACHE_QUERY_VAR = 'smart-pwa-update';
 
 class App {
 
-	public function __construct() {
+	const UPDATE_REWRITE_RULES = 'smart_pwa_queue_flush_rules';
 
+	/**
+	 * App constructor.
+	 */
+	public function __construct() {
 		register_activation_hook( SMART_PWA_FILE, [ __CLASS__, 'queue_flush_rules' ] );
+		register_activation_hook( SMART_PWA_FILE, [ __CLASS__, 'init_static_cache' ] );
 		register_deactivation_hook( SMART_PWA_FILE, [ __CLASS__, 'queue_flush_rules' ] );
 		register_uninstall_hook( SMART_PWA_FILE, [ __CLASS__, 'queue_flush_rules' ] );
-
 		add_action( 'plugins_loaded', [ $this, 'init' ] );
+		add_action( 'wp_head', [ $this, 'register_sw' ] );
+		add_action( 'template_redirect', [ __CLASS__, 'update_static_cache' ], 9999 );
 
 	}
 
+	/**
+	 * Register service worker.
+	 */
+	public function register_sw() {
+		$endpoint = '/' . trailingslashit( SW_ENDPOINT );
+		?>
+		<script>
+			navigator.serviceWorker.register( '<?php echo $endpoint;?>', { scope: '/' } );
+		</script>
+		<?php
+	}
+
+	/**
+	 * Update rewrite rules.
+	 */
 	public static function dequeue_flush_rules() {
-		if ( get_option( 'queue_flush_rules' ) ) {
+		if ( get_option( self::UPDATE_REWRITE_RULES ) ) {
 			flush_rewrite_rules();
-			update_option( 'queue_flush_rules', 0 );
+			update_option( self::UPDATE_REWRITE_RULES, 0 );
 		}
 	}
 
+	/**
+	 * Enqueue update rewrite rules.
+	 */
 	public static function queue_flush_rules() {
-		update_option( 'queue_flush_rules', 1 );
+		update_option( self::UPDATE_REWRITE_RULES, 1 );
 	}
 
+	public static function init_static_cache() {
+		update_option( 'smart_pwa_enqueue_update', 1 );
+		wp_remote_get( home_url() );
+	}
+
+	public static function update_static_cache() {
+		if ( ! is_admin() && get_option( 'smart_pwa_enqueue_update' ) ) {
+			$seeker = new Assets_Seeker();
+			add_action( 'shutdown', function () use ( $seeker ) {
+				update_option( 'smart_pwa_assets_paths', $seeker->get_assets() );
+				update_option( 'smart_pwa_last_updated', current_time( 'U' ) );
+				update_option( 'smart_pwa_enqueue_update', 0 );
+			} );
+		}
+
+	}
+
+	/**
+	 * Initialize
+	 */
 	public function init() {
 		new Controller();
 		new Customizer();

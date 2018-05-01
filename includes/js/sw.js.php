@@ -1,17 +1,12 @@
 'use strict';
-const APP_SHELL_CACHE_NAME = "app-shell-cache-<?php echo get_option( 'pwd_last_updated' )?>";
-const RUNTIME_CACHE_NAME = 'runtime-cache';
-const  NOT_AVAILABLE_KEY = '/<?php echo NOT_AVAILABLE_ENDPOINT;?>/';
+const APP_SHELL_CACHE_NAME = 'smart-pwa-app-shell-cache-<?php echo get_option( 'smart_pwa_last_updated' )?>';
+const RUNTIME_CACHE_NAME = 'smart-pwa-runtime-cache';
+const NOT_AVAILABLE_KEY = '<?php echo '/' . user_trailingslashit( get_page_uri( get_option( 'smart_pwa_not_available_page', false ) ) );?>';
+const PRE_CACHE_ASSETS = JSON.parse( '<?php echo json_encode( get_option( 'smart_pwa_assets_paths', [] ) );?>' );
 
 const urlsToPreCache = [
 	NOT_AVAILABLE_KEY,
-	<?php foreach ( get_option( 'pwa_style_paths' ) as $css ): ?>
-	'<?php echo esc_url( $css );?>',
-	<?php endforeach; ?>
-	<?php foreach ( get_option( 'pwa_script_paths' ) as $js ): ?>
-	'<?php echo esc_url( $js );?>',
-	<?php endforeach; ?>
-];
+].concat( PRE_CACHE_ASSETS );
 
 
 self.addEventListener( 'install', ( event ) => {
@@ -47,12 +42,14 @@ self.addEventListener( 'fetch', ( event ) => {
 	if (
 		event.request.url.indexOf( 'wp-admin' ) === - 1 &&
 		event.request.url.indexOf( 'wp-login' ) === - 1 &&
+		event.request.url.indexOf( 'customize_changeset_uuid' ) === - 1 &&
 		event.request.method === 'GET'
 	) {
 		console.log( '[ServiceWorker] Fetch', event.request.url );
 		// for cache.
 		event.respondWith(
 			caches.match( event.request ).then( ( responseFromCache ) => {
+				//
 				if (responseFromCache) {
 					if ([ 'style', 'script', 'image' ].indexOf( event.request.destination ) > - 1) {
 						console.log( '[ServiceWorker] Cache Matched!', event.request.url, responseFromCache );
@@ -60,7 +57,7 @@ self.addEventListener( 'fetch', ( event ) => {
 					}
 				}
 
-				let promise = fetch( event.request ).then( ( response ) => {
+				let promise = fetch( event.request, { cache: 'default' } ).then( ( response ) => {
 					if (! response || response.status !== 200 || response.type !== 'basic') {
 						return response;
 					}
@@ -69,14 +66,16 @@ self.addEventListener( 'fetch', ( event ) => {
 						cache.put( event.request, responseToCache );
 						console.log( '[ServiceWorker] Fetched&Cached Data', event.request.url );
 						let message = {
-							key : 'updateContent',
+							key: 'updateContent',
 							value: event.request.url
 						};
-						self.clients.matchAll().then(clients =>
-							clients.forEach(client => client.postMessage(message)));
+						self.clients.matchAll().then( clients =>
+							clients.forEach( client => client.postMessage( message ) ) );
 					} );
 
 					return response;
+				} ).catch( ( reason ) => {
+					console.log( '[ServiceWorker]', reason );
 				} );
 
 				if (responseFromCache) {
@@ -84,8 +83,8 @@ self.addEventListener( 'fetch', ( event ) => {
 					return responseFromCache;
 				}
 				else {
+					//fallback contents
 					if (event.request.mode === 'navigate') {
-						// Follback.
 						return caches.match( NOT_AVAILABLE_KEY ).then( ( response ) => {
 							return response;
 						} );

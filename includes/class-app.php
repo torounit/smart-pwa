@@ -61,7 +61,8 @@ class App {
 	}
 
 	public static function update_static_cache() {
-		if ( ! is_admin() && get_option( 'smart_pwa_enqueue_update' ) ) {
+		global $wp_query;
+		if ( ! is_admin() && $wp_query->query[ UPDATE_CACHE_QUERY_VAR ] ) {
 			$seeker = new Assets_Seeker();
 			add_action( 'smart_pwa_parsed_assets', function () use ( $seeker ) {
 				update_option( 'smart_pwa_assets_paths', $seeker->get_assets() );

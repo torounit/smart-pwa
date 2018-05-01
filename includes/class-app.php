@@ -31,6 +31,7 @@ class App {
 
 	public function init() {
 		new Controller();
+		new Customizer();
 		add_action( 'wp_loaded', [ __CLASS__, 'dequeue_flush_rules' ], 200 );
 	}
 

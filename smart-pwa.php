@@ -1,12 +1,11 @@
 <?php
 /**
  * Plugin Name:     Smart PWA
- * Plugin URI:      PLUGIN SITE HERE
- * Description:     PLUGIN DESCRIPTION HERE
- * Author:          YOUR NAME HERE
- * Author URI:      YOUR SITE HERE
+ * Plugin URI:      https://github.com/torounit/smart-pwa
+ * Description:     PWA for WordPress
+ * Author:          Toro_Unit
+ * Author URI:      https://torounit.com
  * Text Domain:     smart-pwa
- * Domain Path:     /languages
  * Version:         0.1.0
  * Requires PHP:    7.0
  *

@@ -9,10 +9,10 @@ $manifest = [
 	"theme_color"      => sanitize_hex_color( get_option( 'smart_pwa_theme_color', '#ffffff' ) ),
 ];
 
-if ( $site_icon = get_site_icon_url( '512' ) ) {
+if ( $site_icon =  get_option( 'smart_pwa_icon' ) ) {
 	$manifest["icons"] = [
 		[
-			"src"   => esc_url( get_site_icon_url( '512' ) ),
+			"src"   => esc_url( $site_icon ),
 			"sizes" => "512x512"
 		]
 	];

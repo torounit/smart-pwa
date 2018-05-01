@@ -23,8 +23,6 @@ class App {
 		add_action( 'after_switch_theme', [ __CLASS__, 'init_static_cache' ] );
 		add_action( 'wp_head', [ $this, 'register_pwa' ] );
 		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'update_static_cache' ], 9999 );
-
-
 		add_filter( 'get_avatar_url', [ $this, 'convert_https_avatar_url' ] );
 
 	}

@@ -15,6 +15,20 @@ class Customizer {
 			'priority' => 200,
 		] );
 
+		$wp_customize->add_setting( 'smart_pwa_icon', [
+			'default'           => '',
+			'type'              => 'option',
+			'sanitize_callback' => 'esc_url',
+			'transport'         => 'postMessage',
+		] );
+
+		$wp_customize->add_control( new \WP_Customize_Cropped_Image_Control( $wp_customize, 'smart_pwa_icon', [
+			'label'   => 'PWA Image',
+			'section' => 'smart_pwa_options',
+			'width'   => 512,
+			'height'  => 512,
+		] ) );
+
 		$wp_customize->add_setting( 'smart_pwa_background_color', [
 			'default'           => '#ffffff',
 			'type'              => 'option',

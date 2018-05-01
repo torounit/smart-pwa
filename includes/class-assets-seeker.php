@@ -20,6 +20,9 @@ class Assets_Seeker {
 	public function ob_end_and_parse() {
 		echo $html = ob_get_clean();
 		$this->parse( $html );
+		if ( did_action( 'wp_footer' ) ) {
+			do_action( 'smart_pwa_parsed_assets' );
+		}
 	}
 
 

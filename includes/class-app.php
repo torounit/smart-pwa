@@ -63,7 +63,7 @@ class App {
 	public static function update_static_cache() {
 		if ( ! is_admin() && get_option( 'smart_pwa_enqueue_update' ) ) {
 			$seeker = new Assets_Seeker();
-			add_action( 'shutdown', function () use ( $seeker ) {
+			add_action( 'smart_pwa_parsed_assets', function () use ( $seeker ) {
 				update_option( 'smart_pwa_assets_paths', $seeker->get_assets() );
 				update_option( 'smart_pwa_last_updated', current_time( 'U' ) );
 				update_option( 'smart_pwa_enqueue_update', 0 );

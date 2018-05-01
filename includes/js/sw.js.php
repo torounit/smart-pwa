@@ -5,8 +5,18 @@ const NOT_AVAILABLE_KEY = '<?php echo '/' . user_trailingslashit( get_page_uri( 
 const PRE_CACHE_ASSETS = JSON.parse( '<?php echo json_encode( get_option( 'smart_pwa_assets_paths', [] ) );?>' );
 
 const urlsToPreCache = [
+	'/',
 	NOT_AVAILABLE_KEY,
 ].concat( PRE_CACHE_ASSETS );
+
+/**
+ * message for browser to update content in cache.
+ * @param {Object} message
+ */
+const updateMessage = ( message ) => {
+	self.clients.matchAll().then( clients =>
+		clients.forEach( client => client.postMessage( message ) ) );
+}
 
 
 self.addEventListener( 'install', ( event ) => {
@@ -46,58 +56,50 @@ self.addEventListener( 'fetch', ( event ) => {
 		event.request.method === 'GET'
 	) {
 		console.log( '[ServiceWorker] Fetch', event.request.url );
-		// for cache.
+
 		event.respondWith(
 			caches.match( event.request ).then( ( responseFromCache ) => {
-				//
+				//Return static content in cache.
 				if (responseFromCache) {
 					if ([ 'style', 'script', 'image' ].indexOf( event.request.destination ) > - 1) {
-						console.log( '[ServiceWorker] Cache Matched!', event.request.url, responseFromCache );
 						return responseFromCache;
 					}
 				}
 
-				let promise = fetch( event.request, { cache: 'default' } ).then( ( response ) => {
+				//Fetch and save content to cache.
+				return fetch( event.request ).then( ( response ) => {
+					//Not 200.
 					if (! response || response.status !== 200 || response.type !== 'basic') {
 						return response;
 					}
+
+					//Save content to cache.
 					let responseToCache = response.clone();
 					caches.open( RUNTIME_CACHE_NAME ).then( ( cache ) => {
 						cache.put( event.request, responseToCache );
 						console.log( '[ServiceWorker] Fetched&Cached Data', event.request.url );
-						let message = {
+						updateMessage( {
 							key: 'updateContent',
 							value: event.request.url
-						};
-						self.clients.matchAll().then( clients =>
-							clients.forEach( client => client.postMessage( message ) ) );
+						} );
 					} );
-
 					return response;
-				} ).catch( ( reason ) => {
-					console.log( '[ServiceWorker]', reason );
-				} );
 
-				if (responseFromCache) {
-					console.log( '[ServiceWorker] Cache Matched!', event.request.url, responseFromCache );
-					return responseFromCache;
-				}
-				else {
-					//fallback contents
+				} ).catch( ( reason ) => {
+					//when fetching failed, return content in cache.
+					if (responseFromCache) {
+						console.log( '[ServiceWorker] Cache Matched!', event.request.url, responseFromCache );
+						return responseFromCache;
+					}
+					//if not found in cache, return fallback page.
 					if (event.request.mode === 'navigate') {
 						return caches.match( NOT_AVAILABLE_KEY ).then( ( response ) => {
 							return response;
 						} );
 					}
-				}
-
-				return promise;
-
+				} );
 			} )
 		);
-
 	}
-
-
 } );
 

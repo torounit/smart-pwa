@@ -22,8 +22,7 @@ class App {
 		add_action( 'plugins_loaded', [ $this, 'init' ] );
 		add_action( 'after_switch_theme', [ __CLASS__, 'init_static_cache' ] );
 		add_action( 'wp_head', [ $this, 'register_sw' ] );
-		add_action( 'template_redirect', [ __CLASS__, 'update_static_cache' ], 9999 );
-
+		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'update_static_cache' ], 9999 );
 
 	}
 
@@ -57,18 +56,16 @@ class App {
 	}
 
 	public static function init_static_cache() {
+		update_option( 'smart_pwa_enqueue_update', 1 );
 		wp_remote_get( add_query_arg( UPDATE_CACHE_QUERY_VAR, '1', home_url() ), [ 'timeout' => 120 ] );
 	}
 
 	public static function update_static_cache() {
-		global $wp_query;
-		if ( ! is_admin() && $wp_query->query[ UPDATE_CACHE_QUERY_VAR ] ) {
+		if ( ! is_admin() && get_option( 'smart_pwa_enqueue_update' ) ) {
 			$seeker = new Assets_Seeker();
-			add_action( 'smart_pwa_parsed_assets', function () use ( $seeker ) {
-				update_option( 'smart_pwa_assets_paths', $seeker->get_assets() );
-				update_option( 'smart_pwa_last_updated', current_time( 'U' ) );
-				update_option( 'smart_pwa_enqueue_update', 0 );
-			} );
+			update_option( 'smart_pwa_assets_paths', $seeker->get_assets() );
+			update_option( 'smart_pwa_last_updated', current_time( 'U' ) );
+			update_option( 'smart_pwa_enqueue_update', 0 );
 		}
 
 	}

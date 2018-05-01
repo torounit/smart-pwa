@@ -7,10 +7,18 @@ class Assets_Seeker {
 	private $assets = [];
 
 	public function __construct() {
-		add_action( 'wp_head', [ $this, 'ob_start' ], 0 );
-		add_action( 'wp_footer', [ $this, 'ob_start' ], 0 );
-		add_action( 'wp_head', [ $this, 'ob_end_and_parse' ], 9999 );
-		add_action( 'wp_footer', [ $this, 'ob_end_and_parse' ], 9999 );
+
+		global $wp_styles;
+		global $wp_scripts;
+
+		$styles  = clone $wp_styles;
+		$scripts = clone $wp_scripts;
+		$this->ob_start();
+		$styles->do_items( false, 0 );
+		$scripts->do_items( false, 0 );
+		$styles->do_items( false, 1 );
+		$scripts->do_items( false, 1 );
+		$this->ob_end_and_parse();
 	}
 
 	public function ob_start() {

@@ -18,7 +18,7 @@ class Customizer {
 		$wp_customize->add_setting( 'smart_pwa_icon', [
 			'default'           => '',
 			'type'              => 'option',
-			'sanitize_callback' => 'esc_url',
+			'sanitize_callback' => 'absint',
 			'transport'         => 'postMessage',
 		] );
 

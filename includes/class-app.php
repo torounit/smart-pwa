@@ -5,6 +5,7 @@ namespace Smart_PWA;
 const SW_ENDPOINT            = 'sw';
 const MANIFEST_ENDPOINT      = 'manifest';
 const UPDATE_CACHE_QUERY_VAR = 'smart-pwa-update';
+const CACHE_TIME             = MINUTE_IN_SECONDS * 30;
 
 class App {
 
@@ -51,10 +52,8 @@ class App {
 		      content="<?php echo sanitize_hex_color( get_option( 'smart_pwa_theme_color', '#ffffff' ) ); ?>">
 		<link rel="manifest" href="<?php echo home_url( MANIFEST_ENDPOINT ); ?>">
 		<script>
-			navigator.serviceWorker.register( '<?php echo $endpoint;?>', { scope: '/' } ).then( function( registration ) {
-					registration.update();
-				}
-			);
+			navigator.serviceWorker.register( '<?php echo $endpoint;?>', { scope: '/' } )
+			;
 		</script>
 		<?php
 	}
@@ -87,7 +86,7 @@ class App {
 		$seeker = new Assets_Seeker();
 		$assets = $seeker->get_assets();
 		update_option( 'smart_pwa_assets_paths', $assets );
-		set_transient( 'smart_pwa_hash', md5( serialize( $assets ) ), HOUR_IN_SECONDS );
+		set_transient( 'smart_pwa_hash', md5( serialize( $assets ) ), CACHE_TIME );
 	}
 
 	public static function after_switch_theme() {

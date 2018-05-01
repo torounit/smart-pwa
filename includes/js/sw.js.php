@@ -58,6 +58,7 @@ self.addEventListener( 'fetch', ( event ) => {
 	) {
 		event.respondWith(
 			caches.match( event.request ).then( ( responseFromCache ) => {
+
 				//Return static content in cache.
 				if (responseFromCache) {
 					if ([ 'style', 'script', 'image' ].indexOf( event.request.destination ) > - 1) {
@@ -72,15 +73,15 @@ self.addEventListener( 'fetch', ( event ) => {
 						return response;
 					}
 
-					//Save content to cache.
 					let responseToCache = response.clone();
-					caches.open( RUNTIME_CACHE_NAME ).then( ( cache ) => {
+					caches.open( RUNTIME_CACHE_NAME ).then( cache => {
 						cache.put( event.request, responseToCache );
 						console.log( '[ServiceWorker] Fetched&Cached Data', event.request.url );
 						updateMessage( {
 							key: 'updateContent',
 							value: event.request.url
 						} );
+
 					} );
 					return response;
 

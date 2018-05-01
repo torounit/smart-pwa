@@ -38,7 +38,7 @@ class Controller {
 
 		if ( isset( $wp_query->query[ SW_ENDPOINT ] ) ) {
 			header( 'Content-Type: text/javascript' );
-			header( 'Cache-Control: max-age=' . MINUTE_IN_SECONDS * 30 );
+			header( 'Cache-Control: max-age=' . CACHE_TIME );
 			header( 'Service-Worker-Allowed: /' );
 			include dirname( SMART_PWA_FILE ) . '/includes/js/sw.js.php';
 			exit;

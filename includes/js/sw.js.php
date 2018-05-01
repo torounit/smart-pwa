@@ -1,7 +1,8 @@
 'use strict';
-const APP_SHELL_CACHE_NAME = 'smart-pwa-app-shell-cache-<?php echo get_option( 'smart_pwa_last_updated' )?>';
+const APP_SHELL_CACHE_NAME = 'smart-pwa-<?php echo get_transient( 'smart_pwa_hash' ); ?>';
 const RUNTIME_CACHE_NAME = 'smart-pwa-runtime-cache';
 const NOT_AVAILABLE_KEY = '<?php echo '/' . user_trailingslashit( get_page_uri( get_option( 'smart_pwa_not_available_page', false ) ) );?>';
+
 const PRE_CACHE_ASSETS = JSON.parse( '<?php echo json_encode( get_option( 'smart_pwa_assets_paths', [] ) );?>' );
 
 const urlsToPreCache = [
@@ -55,8 +56,6 @@ self.addEventListener( 'fetch', ( event ) => {
 		event.request.url.indexOf( 'customize_changeset_uuid' ) === - 1 &&
 		event.request.method === 'GET'
 	) {
-		console.log( '[ServiceWorker] Fetch', event.request.url );
-
 		event.respondWith(
 			caches.match( event.request ).then( ( responseFromCache ) => {
 				//Return static content in cache.

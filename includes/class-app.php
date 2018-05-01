@@ -15,16 +15,17 @@ class App {
 	 */
 	public function __construct() {
 		register_activation_hook( SMART_PWA_FILE, [ __CLASS__, 'queue_flush_rules' ] );
-		register_activation_hook( SMART_PWA_FILE, [ __CLASS__, 'init_static_cache' ] );
 		register_deactivation_hook( SMART_PWA_FILE, [ __CLASS__, 'queue_flush_rules' ] );
 		register_uninstall_hook( SMART_PWA_FILE, [ __CLASS__, 'queue_flush_rules' ] );
 
-		add_action( 'plugins_loaded', [ $this, 'init' ] );
-		add_action( 'after_switch_theme', [ __CLASS__, 'init_static_cache' ] );
-		add_action( 'wp_head', [ $this, 'register_pwa' ] );
-		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'update_static_cache' ], 9999 );
-		add_filter( 'get_avatar_url', [ $this, 'convert_https_avatar_url' ] );
+		register_activation_hook( SMART_PWA_FILE, [ __CLASS__, 'remove_transient' ] );
+		add_action( 'after_switch_theme', [ __CLASS__, 'after_switch_theme' ] );
+		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'check_and_update_static_cache' ], 9999 );
 
+
+		add_action( 'plugins_loaded', [ $this, 'init' ] );
+		add_filter( 'get_avatar_url', [ $this, 'convert_https_avatar_url' ] );
+		add_action( 'wp_head', [ $this, 'register_pwa' ] );
 	}
 
 	/**
@@ -50,7 +51,10 @@ class App {
 		      content="<?php echo sanitize_hex_color( get_option( 'smart_pwa_theme_color', '#ffffff' ) ); ?>">
 		<link rel="manifest" href="<?php echo home_url( MANIFEST_ENDPOINT ); ?>">
 		<script>
-			navigator.serviceWorker.register( '<?php echo $endpoint;?>', { scope: '/' } );
+			navigator.serviceWorker.register( '<?php echo $endpoint;?>', { scope: '/' } ).then( function( registration ) {
+					registration.update();
+				}
+			);
 		</script>
 		<?php
 	}
@@ -72,19 +76,26 @@ class App {
 		update_option( self::UPDATE_REWRITE_RULES, 1 );
 	}
 
-	public static function init_static_cache() {
-		update_option( 'smart_pwa_enqueue_update', 1 );
-		wp_remote_get( add_query_arg( UPDATE_CACHE_QUERY_VAR, '1', home_url() ), [ 'timeout' => 120 ] );
+
+	public static function check_and_update_static_cache() {
+		if ( ! get_transient( 'smart_pwa_hash' ) ) {
+			self::update_static_cache();
+		}
 	}
 
 	public static function update_static_cache() {
-		if ( ! is_admin() && get_option( 'smart_pwa_enqueue_update' ) ) {
-			$seeker = new Assets_Seeker();
-			update_option( 'smart_pwa_assets_paths', $seeker->get_assets() );
-			update_option( 'smart_pwa_last_updated', current_time( 'U' ) );
-			update_option( 'smart_pwa_enqueue_update', 0 );
-		}
+		$seeker = new Assets_Seeker();
+		$assets = $seeker->get_assets();
+		update_option( 'smart_pwa_assets_paths', $assets );
+		set_transient( 'smart_pwa_hash', md5( serialize( $assets ) ), HOUR_IN_SECONDS );
+	}
 
+	public static function after_switch_theme() {
+		delete_transient( 'smart_pwa_hash' );
+	}
+
+	public static function remove_transient() {
+		delete_transient( 'smart_pwa_hash' );
 	}
 
 	/**

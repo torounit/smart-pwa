@@ -11,63 +11,42 @@ class Assets_Seeker {
 		global $wp_styles;
 		global $wp_scripts;
 
-		$styles  = clone $wp_styles;
-		$scripts = clone $wp_scripts;
-		$this->ob_start();
-		$styles->do_items( false, 0 );
-		$scripts->do_items( false, 0 );
-		$styles->do_items( false, 1 );
-		$scripts->do_items( false, 1 );
-		$this->ob_end_and_parse();
-	}
-
-	public function ob_start() {
-		ob_start();
-	}
-
-	public function ob_end_and_parse() {
-		echo $html = ob_get_clean();
-		$this->parse( $html );
-		if ( did_action( 'wp_footer' ) ) {
-			do_action( 'smart_pwa_parsed_assets' );
-		}
-	}
-
-
-	/**
-	 * @param string $html
-	 */
-	public function parse( $html ) {
-		$dom = new \DOMDocument;
-		$dom->loadHTML( $html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
-		$xpath = new \DOMXPath( $dom );
-
-		$styles       = $this->query( $xpath, '//link[@rel="stylesheet"]', 'href' );
-		$scripts      = $this->query( $xpath, '//script', 'src' );
+		$styles       = $this->search_dependencies( $wp_styles, $wp_styles->queue );
+		$scripts      = $this->search_dependencies( $wp_scripts, $wp_scripts->queue );
 		$assets       = array_merge( $styles, $scripts );
-		var_dump($html);
 		$assets       = array_map( function ( $asset ) {
+			if ( 0 === strpos( $asset, '/') ) {
+				return $asset;
+			}
 			if ( false !== strpos( $asset, home_url() ) ) {
 				return $asset = str_replace( trailingslashit( home_url() ), '/', $asset );
 			}
 		}, $assets );
-		$this->assets = array_merge( $this->assets, $assets );
+		$this->assets = array_merge( $this->assets, array_filter( array_unique(  $assets ) ) );
 	}
 
 	/**
-	 * @param \DOMXPath $xpath
-	 * @param string $expression
-	 * @param string $attribute
+	 * @param \WP_Dependencies $dependencies
+	 * @param $handles
 	 *
 	 * @return array
 	 */
-	public function query( \DOMXPath $xpath, $expression, $attribute ) {
-		$query  = iterator_to_array( $xpath->query( $expression ) );
-		$values = array_filter( array_map( function ( \DOMElement $node ) use ( $attribute ) {
-			return $node->getAttribute( $attribute );
-		}, $query ) );
+	public function search_dependencies( \WP_Dependencies $dependencies, $handles ) {
+		$paths = [];
+		foreach ( $handles as $handle ) {
+			/** @var |_WP_Dependency $asset */
+			$asset = $dependencies->registered[ $handle ];
+			if ( ! empty( $asset->src ) && is_string( $asset->src ) ) {
+				$paths[] = $asset->src;
+			}
 
-		return $values;
+			if ( ! empty( $asset->deps ) && is_array( $asset->deps ) ) {
+				$deps  = $this->search_dependencies( $dependencies, $asset->deps );
+				$paths = array_merge( $paths, $deps );
+			}
+		}
+
+		return $paths;
 	}
 
 	/**

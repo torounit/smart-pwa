@@ -49,8 +49,5 @@ class Controller {
 			include dirname( SMART_PWA_FILE ) . '/includes/manifest.php';
 			exit;
 		}
-		if ( isset( $wp_query->query[ UPDATE_CACHE_QUERY_VAR ] ) ) {
-			update_option( 'smart_pwa_enqueue_update', 1 );
-		}
 	}
 }

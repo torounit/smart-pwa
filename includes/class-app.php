@@ -24,6 +24,21 @@ class App {
 		add_action( 'wp_head', [ $this, 'register_pwa' ] );
 		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'update_static_cache' ], 9999 );
 
+
+		add_filter( 'get_avatar_url', [ $this, 'convert_https_avatar_url' ] );
+
+	}
+
+	/**
+	 * Gravatar always https.
+	 *
+	 * @param $url
+	 *
+	 * @return string
+	 */
+	public function convert_https_avatar_url( $url ) {
+		return preg_replace( '/http:\/\/[0-9]\.gravatar\.com/', 'https://secure.gravatar.com', $url );
+
 	}
 
 	/**

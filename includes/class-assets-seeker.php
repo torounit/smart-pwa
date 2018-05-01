@@ -45,6 +45,7 @@ class Assets_Seeker {
 		$styles       = $this->query( $xpath, '//link[@rel="stylesheet"]', 'href' );
 		$scripts      = $this->query( $xpath, '//script', 'src' );
 		$assets       = array_merge( $styles, $scripts );
+		var_dump($assets);
 		$assets       = array_map( function ( $asset ) {
 			if ( false !== strpos( $asset, home_url() ) ) {
 				return $asset = str_replace( trailingslashit( home_url() ), '/', $asset );

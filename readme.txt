@@ -1,4 +1,4 @@
-=== Smart Pwa ===
+=== Smart PWA ===
 Contributors: Toro_Unit
 Donate link: https://www.paypal.me/torounit
 Tags:  pwa, progressive web apps, manifest, web manifest

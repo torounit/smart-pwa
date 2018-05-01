@@ -18,9 +18,12 @@ class App {
 		register_activation_hook( SMART_PWA_FILE, [ __CLASS__, 'init_static_cache' ] );
 		register_deactivation_hook( SMART_PWA_FILE, [ __CLASS__, 'queue_flush_rules' ] );
 		register_uninstall_hook( SMART_PWA_FILE, [ __CLASS__, 'queue_flush_rules' ] );
+
 		add_action( 'plugins_loaded', [ $this, 'init' ] );
+		add_action( 'after_switch_theme', [ __CLASS__, 'init_static_cache' ] );
 		add_action( 'wp_head', [ $this, 'register_sw' ] );
 		add_action( 'template_redirect', [ __CLASS__, 'update_static_cache' ], 9999 );
+
 
 	}
 
@@ -54,8 +57,7 @@ class App {
 	}
 
 	public static function init_static_cache() {
-		update_option( 'smart_pwa_enqueue_update', 1 );
-		wp_remote_get( home_url() );
+		wp_remote_get( add_query_arg( UPDATE_CACHE_QUERY_VAR, '1', home_url() ), [ 'timeout' => 120 ] );
 	}
 
 	public static function update_static_cache() {

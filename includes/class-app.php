@@ -21,7 +21,7 @@ class App {
 
 		add_action( 'plugins_loaded', [ $this, 'init' ] );
 		add_action( 'after_switch_theme', [ __CLASS__, 'init_static_cache' ] );
-		add_action( 'wp_head', [ $this, 'register_sw' ] );
+		add_action( 'wp_head', [ $this, 'register_pwa' ] );
 		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'update_static_cache' ], 9999 );
 
 	}
@@ -29,9 +29,13 @@ class App {
 	/**
 	 * Register service worker.
 	 */
-	public function register_sw() {
+	public function register_pwa() {
+
 		$endpoint = '/' . trailingslashit( SW_ENDPOINT );
 		?>
+		<meta name="theme-color"
+		      content="<?php echo sanitize_hex_color( get_option( 'smart_pwa_theme_color', '#ffffff' ) ); ?>">
+		<link rel="manifest" href="<?php echo home_url( MANIFEST_ENDPOINT ); ?>">
 		<script>
 			navigator.serviceWorker.register( '<?php echo $endpoint;?>', { scope: '/' } );
 		</script>

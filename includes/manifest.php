@@ -1,18 +1,25 @@
 <?php
 $manifest = [
-	"name"             => get_bloginfo( 'name' ),
-	"short_name"       => get_bloginfo( 'name' ),
+	"name"             => esc_html( get_bloginfo( 'name' ) ),
+	"short_name"       => esc_html( get_bloginfo( 'name' ) ),
 	"start_url"        => home_url(),
 	"display"          => "standalone",
-	"background_color" => get_option( 'smart_pwa_background_color', '#fff' ),
-	"description"      => get_bloginfo( 'description' ),
-	"theme_color"      => get_option( 'smart_pwa_theme_color', '#fff' ),
+	"background_color" => sanitize_hex_color( get_option( 'smart_pwa_background_color', '#fff' ) ),
+	"description"      => esc_html( get_bloginfo( 'description' ) ),
+	"theme_color"      => sanitize_hex_color( get_option( 'smart_pwa_theme_color', '#ffffff' ) ),
 ];
 
 if ( $site_icon = get_site_icon_url( '512' ) ) {
 	$manifest["icons"] = [
 		[
-			"src"   => get_site_icon_url( '512' ),
+			"src"   => esc_url( get_site_icon_url( '512' ) ),
+			"sizes" => "512x512"
+		]
+	];
+} else {
+	$manifest["icons"] = [
+		[
+			"src"   => esc_url( plugins_url( 'wp-logo.png', SMART_PWA_FILE ) ),
 			"sizes" => "512x512"
 		]
 	];

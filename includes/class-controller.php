@@ -1,18 +1,30 @@
 <?php
+/**
+ * Controller.
+ *
+ * @package Smart_PWA.
+ */
 
 namespace Smart_PWA;
 
+/**
+ * Class Controller
+ */
 class Controller {
 
-	function __construct() {
-
+	/**
+	 * Controller constructor.
+	 */
+	public function __construct() {
 		add_action( 'template_redirect', [ $this, 'template_redirect' ] );
 		add_action( 'init', [ $this, 'add_endpoints' ] );
-		add_action( 'query_vars', [ $this, 'query_vars' ] );
+		add_filter( 'query_vars', [ $this, 'query_vars' ] );
 	}
 
 	/**
-	 * @param $vars
+	 * Add query var to white list.
+	 *
+	 * @param array $vars The array of whitelisted query variable names.
 	 *
 	 * @return array
 	 */
@@ -24,13 +36,21 @@ class Controller {
 		return $vars;
 	}
 
+	/**
+	 * Add endpoint.
+	 */
 	public function add_endpoints() {
 		add_rewrite_endpoint( SW_ENDPOINT, EP_ROOT );
 		add_rewrite_endpoint( MANIFEST_ENDPOINT, EP_ROOT );
 	}
 
+	/**
+	 * Select view.
+	 */
 	public function template_redirect() {
 		/**
+		 * Global \WP_Query.
+		 *
 		 * @var \WP_Query;
 		 */
 		global $wp_query;

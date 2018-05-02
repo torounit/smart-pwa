@@ -1,8 +1,8 @@
 <?php
 /**
- * Smart_PWA\App
+ * Bootstrap.
  *
- * main class.
+ * @package Smart_PWA
  */
 
 namespace Smart_PWA;
@@ -14,7 +14,6 @@ const CACHE_TIME             = MINUTE_IN_SECONDS * 30;
 
 /**
  * Class App
- * @package Smart_PWA
  */
 class App {
 
@@ -56,8 +55,7 @@ class App {
 
 		$endpoint = '/' . trailingslashit( SW_ENDPOINT );
 		?>
-		<meta name="theme-color"
-			  content="<?php echo sanitize_hex_color( get_option( 'smart_pwa_theme_color', '#ffffff' ) ); ?>">
+		<meta name="theme-color" content="<?php echo sanitize_hex_color( get_option( 'smart_pwa_theme_color', '#ffffff' ) ); ?>">
 		<link rel="manifest" href="<?php echo home_url( MANIFEST_ENDPOINT ); ?>">
 		<script>
 			navigator.serviceWorker.register( '<?php echo $endpoint; ?>', { scope: '/' } )
@@ -83,13 +81,18 @@ class App {
 		update_option( self::UPDATE_REWRITE_RULES, 1 );
 	}
 
-
+	/**
+	 * Check and call Update Pre Cache.
+	 */
 	public static function check_and_update_static_cache() {
 		if ( ! get_transient( 'smart_pwa_hash' ) ) {
 			self::update_static_cache();
 		}
 	}
 
+	/**
+	 * Update Caches.
+	 */
 	public static function update_static_cache() {
 		$seeker = new Assets_Seeker();
 		$assets = $seeker->get_assets();
@@ -97,10 +100,16 @@ class App {
 		set_transient( 'smart_pwa_hash', md5( serialize( $assets ) ), CACHE_TIME );
 	}
 
+	/**
+	 * After switch themes.
+	 */
 	public static function after_switch_theme() {
 		delete_transient( 'smart_pwa_hash' );
 	}
 
+	/**
+	 * Remove cache hash.
+	 */
 	public static function remove_transient() {
 		delete_transient( 'smart_pwa_hash' );
 	}

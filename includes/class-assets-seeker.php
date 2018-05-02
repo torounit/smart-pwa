@@ -1,11 +1,29 @@
 <?php
+/**
+ * Class Assets_Seeker.
+ *
+ * Search assets for Pre Cache.
+ *
+ * @package Smart_PWA
+ */
 
 namespace Smart_PWA;
 
+/**
+ * Class Assets_Seeker
+ */
 class Assets_Seeker {
 
+	/**
+	 * An array of asset url.
+	 *
+	 * @var array
+	 */
 	private $assets = [];
 
+	/**
+	 * Assets_Seeker constructor.
+	 */
 	public function __construct() {
 
 		global $wp_styles;
@@ -19,22 +37,28 @@ class Assets_Seeker {
 				return $asset;
 			}
 			if ( false !== strpos( $asset, home_url() ) ) {
-				return $asset = str_replace( trailingslashit( home_url() ), '/', $asset );
+				return str_replace( trailingslashit( home_url() ), '/', $asset );
 			}
 		}, $assets );
 		$this->assets = array_merge( $this->assets, array_filter( array_unique( $assets ) ) );
 	}
 
 	/**
-	 * @param \WP_Dependencies $dependencies
-	 * @param $handles
+	 * Search dependency urls.
+	 *
+	 * @param \WP_Dependencies $dependencies Dependencies object.
+	 * @param array            $handles An array of handle dependencies.
 	 *
 	 * @return array
 	 */
 	public function search_dependencies( \WP_Dependencies $dependencies, $handles ) {
 		$paths = [];
 		foreach ( $handles as $handle ) {
-			/** @var |_WP_Dependency $asset */
+			/**
+			 * Dependency object.
+			 *
+			 * @var \_WP_Dependency $asset
+			 */
 			$asset = $dependencies->registered[ $handle ];
 			if ( ! empty( $asset->src ) && is_string( $asset->src ) ) {
 				$paths[] = $asset->src;
@@ -50,6 +74,8 @@ class Assets_Seeker {
 	}
 
 	/**
+	 * Getter asset urls.
+	 *
 	 * @return array
 	 */
 	public function get_assets() {

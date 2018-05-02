@@ -1,4 +1,9 @@
 <?php
+/**
+ * Smart_PWA\App
+ *
+ * main class.
+ */
 
 namespace Smart_PWA;
 
@@ -7,6 +12,10 @@ const MANIFEST_ENDPOINT      = 'manifest';
 const UPDATE_CACHE_QUERY_VAR = 'smart-pwa-update';
 const CACHE_TIME             = MINUTE_IN_SECONDS * 30;
 
+/**
+ * Class App
+ * @package Smart_PWA
+ */
 class App {
 
 	const UPDATE_REWRITE_RULES = 'smart_pwa_queue_flush_rules';
@@ -31,7 +40,7 @@ class App {
 	/**
 	 * Gravatar always https.
 	 *
-	 * @param $url
+	 * @param string $url gravatar url.
 	 *
 	 * @return string
 	 */

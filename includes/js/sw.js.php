@@ -1,3 +1,11 @@
+<?php
+/**
+ * Service Worker
+ *
+ * @package Smart_PWA
+ */
+
+?>
 'use strict';
 const APP_SHELL_CACHE_NAME = 'smart-pwa-<?php echo get_transient( 'smart_pwa_hash' ); ?>';
 const RUNTIME_CACHE_NAME = 'smart-pwa-runtime-cache';
@@ -10,10 +18,6 @@ const urlsToPreCache = [
 	NOT_AVAILABLE_KEY,
 ].concat( PRE_CACHE_ASSETS );
 
-/**
- * message for browser to update content in cache.
- * @param {Object} message
- */
 const updateMessage = ( message ) => {
 	self.clients.matchAll().then( clients =>
 		clients.forEach( client => client.postMessage( message ) ) );

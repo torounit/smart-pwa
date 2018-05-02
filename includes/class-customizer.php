@@ -1,13 +1,29 @@
 <?php
+/**
+ * Customizer Setting.
+ *
+ * @package Smart_PWA
+ */
 
 namespace Smart_PWA;
 
+/**
+ * Class Customizer
+ */
 class Customizer {
 
+	/**
+	 * Customizer constructor.
+	 */
 	public function __construct() {
 		add_action( 'customize_register', [ $this, 'customize_register' ], 11 );
 	}
 
+	/**
+	 * Customizer settings.
+	 *
+	 * @param \WP_Customize_Manager $wp_customize WP_Customize_Manager Object.
+	 */
 	public function customize_register( \WP_Customize_Manager $wp_customize ) {
 
 		$wp_customize->add_section( 'smart_pwa_options', [

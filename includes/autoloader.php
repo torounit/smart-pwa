@@ -1,10 +1,16 @@
 <?php
+/**
+ * Autoloader
+ *
+ * @package Smart_PWA
+ */
 
 namespace Smart_PWA;
+
 /**
  * Enable autoloading of plugin classes in namespace
  *
- * @param $class_name
+ * @param string $class_name class name.
  */
 function autoload( $class_name ) {
 	/* Only autoload classes from this namespace */

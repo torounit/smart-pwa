@@ -31,5 +31,5 @@ To install this plugin:
 == Changelog ==
 
 = 0.1.0 =
-* First release,
+* First release.
 

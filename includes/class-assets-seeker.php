@@ -15,14 +15,14 @@ class Assets_Seeker {
 		$scripts      = $this->search_dependencies( $wp_scripts, $wp_scripts->queue );
 		$assets       = array_merge( $styles, $scripts );
 		$assets       = array_map( function ( $asset ) {
-			if ( 0 === strpos( $asset, '/') ) {
+			if ( 0 === strpos( $asset, '/' ) ) {
 				return $asset;
 			}
 			if ( false !== strpos( $asset, home_url() ) ) {
 				return $asset = str_replace( trailingslashit( home_url() ), '/', $asset );
 			}
 		}, $assets );
-		$this->assets = array_merge( $this->assets, array_filter( array_unique(  $assets ) ) );
+		$this->assets = array_merge( $this->assets, array_filter( array_unique( $assets ) ) );
 	}
 
 	/**

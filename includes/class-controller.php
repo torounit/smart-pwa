@@ -35,7 +35,6 @@ class Controller {
 		 */
 		global $wp_query;
 
-
 		if ( isset( $wp_query->query[ SW_ENDPOINT ] ) ) {
 			header( 'Content-Type: text/javascript' );
 			header( 'Cache-Control: max-age=' . CACHE_TIME );

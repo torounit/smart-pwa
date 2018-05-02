@@ -23,7 +23,6 @@ class App {
 		add_action( 'after_switch_theme', [ __CLASS__, 'after_switch_theme' ] );
 		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'check_and_update_static_cache' ], 9999 );
 
-
 		add_action( 'plugins_loaded', [ $this, 'init' ] );
 		add_filter( 'get_avatar_url', [ $this, 'convert_https_avatar_url' ] );
 		add_action( 'wp_head', [ $this, 'register_pwa' ] );
@@ -49,10 +48,10 @@ class App {
 		$endpoint = '/' . trailingslashit( SW_ENDPOINT );
 		?>
 		<meta name="theme-color"
-		      content="<?php echo sanitize_hex_color( get_option( 'smart_pwa_theme_color', '#ffffff' ) ); ?>">
+			  content="<?php echo sanitize_hex_color( get_option( 'smart_pwa_theme_color', '#ffffff' ) ); ?>">
 		<link rel="manifest" href="<?php echo home_url( MANIFEST_ENDPOINT ); ?>">
 		<script>
-			navigator.serviceWorker.register( '<?php echo $endpoint;?>', { scope: '/' } )
+			navigator.serviceWorker.register( '<?php echo $endpoint; ?>', { scope: '/' } )
 			;
 		</script>
 		<?php

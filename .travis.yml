@@ -21,18 +21,11 @@ matrix:
     - php: 7.1
       env: WP_VERSION=latest
     - php: 7.0
+      env: WP_VERSION=4.9
+    - php: 7.0
       env: WP_VERSION=latest
-    - php: 5.6
-      env: WP_VERSION=4.4
-    - php: 5.6
-      env: WP_VERSION=latest
-    - php: 5.6
+    - php: 7.0
       env: WP_VERSION=trunk
-    - php: 5.6
-      env: WP_TRAVISCI=phpcs
-    - php: 5.3
-      env: WP_VERSION=latest
-      dist: precise
 
 before_script:
   - export PATH="$HOME/.composer/vendor/bin:$PATH"
@@ -60,6 +53,6 @@ script:
       WP_MULTISITE=1 phpunit
     fi
   - |
-    if [[ "$WP_TRAVISCI" == "phpcs" ]] ; then
-      phpcs
-    fi
+    phpcs
+
+after_success: curl -L https://raw.githubusercontent.com/miya0001/travis2wpplugin/master/deploy.sh | bash

@@ -55,7 +55,7 @@ class Assets_Seeker {
 	 * Search dependency urls.
 	 *
 	 * @param \WP_Dependencies $dependencies Dependencies object.
-	 * @param array $handles An array of handle dependencies.
+	 * @param array            $handles      An array of handle dependencies.
 	 *
 	 * @return array
 	 */

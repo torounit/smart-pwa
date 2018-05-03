@@ -96,6 +96,18 @@ class App {
 	public static function update_static_cache() {
 		$seeker = new Assets_Seeker();
 		$assets = $seeker->get_assets();
+
+		if ( has_header_image() ) {
+			$assets[] = esc_url( get_header_image() );
+		}
+		if ( has_custom_logo() ) {
+			$custom_logo_id = get_theme_mod( 'custom_logo' );
+			$assets[] = wp_get_attachment_image_url( $custom_logo_id, 'full' );
+		}
+		if ( has_site_icon() ) {
+			$assets[] = esc_url( get_site_icon_url() );
+		}
+
 		update_option( 'smart_pwa_assets_paths', $assets );
 		set_transient( 'smart_pwa_hash', md5( serialize( $assets ) ), CACHE_TIME );
 	}

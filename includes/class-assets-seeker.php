@@ -22,12 +22,20 @@ class Assets_Seeker {
 	private $assets = [];
 
 	/**
+	 * Default asset version.
+	 *
+	 * @var string
+	 */
+	private $default_version;
+
+	/**
 	 * Assets_Seeker constructor.
 	 */
 	public function __construct() {
 
 		global $wp_styles;
 		global $wp_scripts;
+		$this->default_version = get_bloginfo( 'version' );
 
 		$styles       = $this->search_dependencies( $wp_styles, $wp_styles->queue );
 		$scripts      = $this->search_dependencies( $wp_scripts, $wp_scripts->queue );
@@ -47,7 +55,7 @@ class Assets_Seeker {
 	 * Search dependency urls.
 	 *
 	 * @param \WP_Dependencies $dependencies Dependencies object.
-	 * @param array            $handles An array of handle dependencies.
+	 * @param array $handles An array of handle dependencies.
 	 *
 	 * @return array
 	 */
@@ -61,7 +69,11 @@ class Assets_Seeker {
 			 */
 			$asset = $dependencies->registered[ $handle ];
 			if ( ! empty( $asset->src ) && is_string( $asset->src ) ) {
-				$paths[] = $asset->src;
+				$ver = $asset->ver;
+				if ( ! $ver ) {
+					$ver = $this->default_version;
+				}
+				$paths[] = add_query_arg( 'ver', $ver, $asset->src );
 			}
 
 			if ( ! empty( $asset->deps ) && is_array( $asset->deps ) ) {

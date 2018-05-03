@@ -4,7 +4,7 @@ Donate link: https://www.paypal.me/torounit
 Tags:  pwa, progressive web apps, manifest, web manifest
 Requires at least: 4.9
 Tested up to: 4.9.5
-Stable tag: 0.1.0
+Stable tag: 0.1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -29,6 +29,9 @@ To install this plugin:
 
 
 == Changelog ==
+
+= 0.1.1 =
+* Add assets version query arg.
 
 = 0.1.0 =
 * First release.

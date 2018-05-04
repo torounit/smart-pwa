@@ -102,7 +102,7 @@ class App {
 		}
 		if ( has_custom_logo() ) {
 			$custom_logo_id = get_theme_mod( 'custom_logo' );
-			$assets[] = wp_get_attachment_image_url( $custom_logo_id, 'full' );
+			$assets[]       = wp_get_attachment_image_url( $custom_logo_id, 'full' );
 		}
 		if ( has_site_icon() ) {
 			$assets[] = esc_url( get_site_icon_url() );

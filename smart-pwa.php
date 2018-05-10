@@ -15,7 +15,7 @@
  * Author:          Toro_Unit
  * Author URI:      https://torounit.com
  * Text Domain:     smart-pwa
- * Version:         0.1.3
+ * Version:         0.1.4
  * Requires PHP:    7.0
  */
 

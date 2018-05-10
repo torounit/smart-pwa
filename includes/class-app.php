@@ -58,8 +58,9 @@ class App {
 		<meta name="theme-color" content="<?php echo sanitize_hex_color( get_option( 'smart_pwa_theme_color', '#ffffff' ) ); ?>">
 		<link rel="manifest" href="<?php echo home_url( MANIFEST_ENDPOINT ); ?>">
 		<script>
-			navigator.serviceWorker.register( '<?php echo $endpoint; ?>', { scope: '/' } )
-			;
+			if ('serviceWorker' in navigator) {
+				navigator.serviceWorker.register( '<?php echo $endpoint; ?>', { scope: '/' } );
+			}
 		</script>
 		<?php
 	}

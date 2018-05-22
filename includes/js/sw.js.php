@@ -10,7 +10,7 @@
 const APP_SHELL_CACHE_NAME = 'smart-pwa-<?php echo get_transient( 'smart_pwa_hash' ); ?>'
 const RUNTIME_CACHE_NAME = 'smart-pwa-runtime-cache'
 const NOT_AVAILABLE_KEY = '<?php echo '/' . user_trailingslashit( get_page_uri( get_option( 'smart_pwa_not_available_page', false ) ) ); ?>'
-const MANIFEST_URL = '<?php echo '/' . user_trailingslashit( Smart_PWA\MANIFEST_ENDPOINT );?>'
+const MANIFEST_URL = '<?php echo '/' . user_trailingslashit( Smart_PWA\MANIFEST_ENDPOINT ); ?>'
 
 const PRE_CACHE_ASSETS = JSON.parse( '<?php echo json_encode( get_option( 'smart_pwa_assets_paths', [] ) ); ?>' )
 

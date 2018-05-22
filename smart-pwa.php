@@ -5,7 +5,7 @@
  * PWA for WordPress
  *
  * @package         Smart_PWA
- * @version         0.1.5
+ * @version         0.1.6
  */
 
 /**
@@ -15,7 +15,7 @@
  * Author:          Toro_Unit
  * Author URI:      https://torounit.com
  * Text Domain:     smart-pwa
- * Version:         0.1.5
+ * Version:         0.1.6
  * Requires PHP:    7.0
  */
 

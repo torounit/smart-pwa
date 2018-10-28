@@ -10,7 +10,7 @@ $manifest = [
 	'short_name'       => esc_html( get_bloginfo( 'name' ) ),
 	'start_url'        => home_url(),
 	'display'          => 'standalone',
-	'background_color' => sanitize_hex_color( get_option( 'smart_pwa_background_color', '#fff' ) ),
+	'background_color' => sanitize_hex_color( get_option( 'smart_pwa_background_color', '#ffffff' ) ),
 	'description'      => esc_html( get_bloginfo( 'description' ) ),
 	'theme_color'      => sanitize_hex_color( get_option( 'smart_pwa_theme_color', '#ffffff' ) ),
 ];

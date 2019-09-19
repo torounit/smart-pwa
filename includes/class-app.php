@@ -20,6 +20,23 @@ class App {
 	const UPDATE_REWRITE_RULES = 'smart_pwa_queue_flush_rules';
 
 	/**
+	 * @param $path
+	 *
+	 * @return string
+	 */
+	public static function home_url( $path = '' ) {
+		return wp_make_link_relative( home_url( $path ) );
+	}
+
+	public static function get_manifest_url() {
+		if ( get_option( 'permalink_structure' ) ) {
+			return self::home_url( MANIFEST_ENDPOINT );
+		} else {
+			return self::home_url( '?'. MANIFEST_ENDPOINT );
+		}
+	}
+
+	/**
 	 * App constructor.
 	 */
 	public function __construct() {
@@ -55,12 +72,13 @@ class App {
 
 		$endpoint = '/' . trailingslashit( SW_ENDPOINT );
 		?>
-		<meta name="theme-color" content="<?php echo sanitize_hex_color( get_option( 'smart_pwa_theme_color', '#ffffff' ) ); ?>">
-		<link rel="manifest" href="<?php echo home_url( MANIFEST_ENDPOINT ); ?>">
+		<meta name="theme-color"
+		      content="<?php echo sanitize_hex_color( get_option( 'smart_pwa_theme_color', '#ffffff' ) ); ?>">
+		<link rel="manifest" href="<?php echo self::get_manifest_url(); ?>">
 		<script>
-			if ('serviceWorker' in navigator) {
-				navigator.serviceWorker.register( '<?php echo $endpoint; ?>', { scope: '/' } );
-			}
+		if ( 'serviceWorker' in navigator ) {
+			navigator.serviceWorker.register( '<?php echo $endpoint; ?>', { scope: '/' } );
+		}
 		</script>
 		<?php
 	}

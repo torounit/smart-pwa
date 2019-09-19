@@ -14,7 +14,7 @@ services:
         volumes:
             - ./:/var/www/html/wp-content/plugins/smart-pwa
     db:
-        image: mysql:latest
+        image: mysql:5.7
         environment:
             MYSQL_RANDOM_ROOT_PASSWORD: "yes"
             MYSQL_DATABASE: "wordpress"
